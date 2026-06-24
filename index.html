@@ -51,14 +51,18 @@
         }
         .upload-zone {
             border: 2px dashed #444;
-            padding: 20px 10px;
+            padding: 40px 10px;
             text-align: center;
             border-radius: 6px;
             cursor: pointer;
-            font-size: 13px;
+            font-size: 14px;
             background: #171717;
+            transition: all 0.2s ease;
         }
-        .upload-zone:hover { border-color: var(--accent); }
+        .upload-zone:hover { 
+            border-color: var(--accent); 
+            background: #222;
+        }
         .preview-img {
             width: 100%;
             max-height: 65vh;
@@ -122,108 +126,4 @@
             <div class="upload-box">
                 <h3>Side A (ULD Numbers)</h3>
                 <div class="upload-zone" id="dropzoneA">
-                    <p>Drop Image or Click</p>
-                    <input type="file" id="fileInputA" accept="image/*" style="display:none">
-                </div>
-                <img id="previewA" class="preview-img" alt="Side A Preview">
-            </div>
-
-            <div class="upload-box">
-                <h3>Side B (Bag Counts / Grid)</h3>
-                <div class="upload-zone" id="dropzoneB">
-                    <p>Drop Image or Click</p>
-                    <input type="file" id="fileInputB" accept="image/*" style="display:none">
-                </div>
-                <img id="previewB" class="preview-img" alt="Side B Preview">
-            </div>
-
-        </div>
-    </div>
-
-    <div class="panel">
-        <h2>2. Data Entry & Automated Checker</h2>
-        <div class="info-box">
-            <strong>Rules Applied:</strong> Bags = 13 kg | AKE empty weight = +65 kg | PMC = Total gross weight directly from sheet | Catering = Calculated automatically from remainder.
-        </div>
-        
-        <div class="form-group">
-            <div class="hold-title">
-                <span>HOLD 2 (Pallets / PMC Gross)</span>
-                <span id="status-h2" class="status-badge mismatch">0 kg</span>
-            </div>
-            <div class="grid-row">
-                <div>
-                    <label>Target Loadsheet WT</label>
-                    <input type="number" id="target-h2" value="" placeholder="0" oninput="calculate()">
-                </div>
-                <div>
-                    <label>Pos 23P WT</label>
-                    <input type="number" id="h2-23p" value="" placeholder="0" oninput="calculate()">
-                </div>
-                <div>
-                    <label>Pos 24P WT</label>
-                    <input type="number" id="h2-24p" value="" placeholder="0" oninput="calculate()">
-                </div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="hold-title">
-                <span>HOLD 3 (Containers / AKE)</span>
-                <span id="status-h3" class="status-badge mismatch">0 kg</span>
-            </div>
-            <div class="grid-row">
-                <div><label>Target Loadsheet WT</label><input type="number" id="target-h3" value="" placeholder="0" oninput="calculate()"></div>
-                <div><label>33L Bags</label><input type="number" id="h3-33l" value="" placeholder="0" oninput="calculate()"></div>
-                <div><label>33R Bags</label><input type="number" id="h3-33r" value="" placeholder="0" oninput="calculate()"></div>
-            </div>
-            <div class="grid-row" style="margin-top: 5px;">
-                <div></div>
-                <div><label>34L Bags</label><input type="number" id="h3-34l" value="" placeholder="0" oninput="calculate()"></div>
-                <div><label>34R Bags</label><input type="number" id="h3-34r" value="" placeholder="0" oninput="calculate()"></div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="hold-title">
-                <span>HOLD 4 (Containers + Auto Catering)</span>
-                <span id="status-h4" class="status-badge mismatch">0 kg</span>
-            </div>
-            <div class="grid-row">
-                <div><label>Target Loadsheet WT</label><input type="number" id="target-h4" value="" placeholder="0" oninput="calculate()"></div>
-                <div><label>41L Bags</label><input type="number" id="h4-41l" value="" placeholder="0" oninput="calculate()"></div>
-                <div><label>41R Bags</label><input type="number" id="h4-41r" value="" placeholder="0" oninput="calculate()"></div>
-            </div>
-            <div class="grid-row" style="margin-top: 5px;">
-                <div>
-                    <label>Auto-Calculated Catering</label>
-                    <input type="text" id="h4-cat" style="background:#153520; color:#85ff85; font-weight:bold;" readonly>
-                </div>
-                <div><label>42L Bags</label><input type="number" id="h4-42l" value="" placeholder="0" oninput="calculate()"></div>
-                <div></div>
-            </div>
-        </div>
-
-        <div class="form-group">
-            <div class="hold-title">
-                <span>HOLD 5 (Loose Bulk)</span>
-                <span id="status-h5" class="status-badge mismatch">0 kg</span>
-            </div>
-            <div class="grid-row">
-                <div>
-                    <label>Target Loadsheet WT</label>
-                    <input type="number" id="target-h5" value="" placeholder="0" oninput="calculate()">
-                </div>
-                <div>
-                    <label>Bulk Bags (No Tare)</label>
-                    <input type="number" id="h5-bags" value="" placeholder="0" oninput="calculate()">
-                </div>
-                <div></div>
-            </div>
-        </div>
-
-    </div>
-</div>
-
-<script>
-    function setupUploader(dropzoneId, inputId, preview
+                    <p style="pointer-events: none; margin: 0;">📸 Click or Drop Here</p>
