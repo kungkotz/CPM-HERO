@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sunclass Cargo Reconciler - Unrestricted Configuration</title>
+    <title>Sunclass Cargo Reconciler - Fleet Configuration</title>
     <style>
         :root {
             --bg-color: #121212;
@@ -23,7 +23,7 @@
             padding: 20px;
         }
         .container {
-            max-width: 950px;
+            max-width: 1050px;
             margin: 0 auto;
         }
         .header {
@@ -60,17 +60,8 @@
             color: #fff;
             box-shadow: 0 2px 4px rgba(0,0,0,0.4);
         }
-        .info-box {
-            background: #1a2a3a;
-            border-left: 4px solid var(--accent);
-            padding: 12px;
-            margin-bottom: 20px;
-            font-size: 13px;
-            border-radius: 0 4px 4px 0;
-            line-height: 1.4;
-        }
         .form-group {
-            margin-bottom: 20px;
+            margin-bottom: 25px;
             background: var(--card-bg);
             padding: 15px;
             border-radius: 8px;
@@ -85,11 +76,11 @@
             justify-content: space-between;
             align-items: center;
         }
-        .grid-layout {
+        .row-grid {
             display: grid;
-            grid-template-columns: 1.2fr 1fr 1fr;
-            gap: 15px;
-            margin-bottom: 12px;
+            grid-template-columns: 1.2fr repeat(3, 1fr);
+            gap: 12px;
+            margin-bottom: 10px;
             align-items: end;
         }
         .input-wrapper {
@@ -105,7 +96,7 @@
             background: #2a1b0c;
         }
         label { 
-            font-size: 12px; 
+            font-size: 11px; 
             color: #aaa; 
             display: block; 
             margin-bottom: 4px; 
@@ -120,7 +111,7 @@
             padding: 6px;
             border-radius: 4px;
             box-sizing: border-box;
-            font-size: 14px;
+            font-size: 13px;
         }
         input:focus { border-color: var(--accent); outline: none; }
         .cat-toggle {
@@ -128,7 +119,7 @@
             align-items: center;
             gap: 4px;
             margin-top: 6px;
-            font-size: 11px;
+            font-size: 10px;
             color: #888;
             cursor: pointer;
             user-select: none;
@@ -143,7 +134,8 @@
         }
         .match { background: var(--success); color: white; }
         .mismatch { background: var(--error); color: white; }
-        .layout-note { font-size: 11px; color: #666; margin-top: -8px; margin-bottom: 10px; font-style: italic; }
+        .layout-note { font-size: 11px; color: #666; margin-top: -8px; margin-bottom: 12px; font-style: italic; }
+        .hidden-row { display: none !important; }
     </style>
 </head>
 <body>
@@ -157,136 +149,203 @@
         </div>
     </div>
 
-    <div class="info-box">
-        <strong>Unrestricted Configuration Mode:</strong> Toggle the <strong>"Catering?"</strong> checkbox under <em>any</em> unit position to set it as a catering block. You can select multiple catering units in a single hold, or turn an entire hold completely into catering to match specialized manifest layouts!
-    </div>
-
-    <!-- HOLD 2 -->
     <div class="form-group">
         <div class="hold-title">
-            <span>HOLD 2 (Pallets / PMC Gross)</span>
+            <span>HOLD 1</span>
+            <span id="status-h1" class="status-badge mismatch">Empty</span>
+        </div>
+        <div class="layout-note" id="note-h1">Sections 11-13 (A330-900 Configuration)</div>
+        
+        <div class="row-grid">
+            <div class="input-wrapper" style="background: #111;">
+                <label>Target Loadsheet WT</label>
+                <input type="number" id="target-h1" placeholder="0" oninput="calculate()">
+            </div>
+            <div class="input-wrapper" id="wrap-h1-11l">
+                <label id="lbl-h1-11l">11L Bags</label>
+                <input type="number" id="h1-11l" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-11l" onchange="toggleCatering('h1-11l','chk-h1-11l','lbl-h1-11l')"> Catering?</label>
+            </div>
+            <div class="input-wrapper" id="wrap-h1-11p">
+                <label id="lbl-h1-11p">11P Gross WT</label>
+                <input type="number" id="h1-11p" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-11p" onchange="toggleCatering('h1-11p','chk-h1-11p','lbl-h1-11p', true)"> Catering?</label>
+            </div>
+            <div class="input-wrapper" id="wrap-h1-11r">
+                <label id="lbl-h1-11r">11R Bags</label>
+                <input type="number" id="h1-11r" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-11r" onchange="toggleCatering('h1-11r','chk-h1-11r','lbl-h1-11r')"> Catering?</label>
+            </div>
+        </div>
+
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h1-12l">
+                <label id="lbl-h1-12l">12L Bags</label>
+                <input type="number" id="h1-12l" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-12l" onchange="toggleCatering('h1-12l','chk-h1-12l','lbl-h1-12l')"> Catering?</label>
+            </div>
+            <div class="input-wrapper" id="wrap-h1-12p">
+                <label id="lbl-h1-12p">12P Gross WT</label>
+                <input type="number" id="h1-12p" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-12p" onchange="toggleCatering('h1-12p','chk-h1-12p','lbl-h1-12p', true)"> Catering?</label>
+            </div>
+            <div class="input-wrapper" id="wrap-h1-12r">
+                <label id="lbl-h1-12r">12R Bags</label>
+                <input type="number" id="h1-12r" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-12r" onchange="toggleCatering('h1-12r','chk-h1-12r','lbl-h1-12r')"> Catering?</label>
+            </div>
+        </div>
+
+        <div class="row-grid" id="row-h1-13">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h1-13l">
+                <label id="lbl-h1-13l">13L Bags</label>
+                <input type="number" id="h1-13l" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-13l" onchange="toggleCatering('h1-13l','chk-h1-13l','lbl-h1-13l')"> Catering?</label>
+            </div>
+            <div></div>
+            <div class="input-wrapper" id="wrap-h1-13r">
+                <label id="lbl-h1-13r">13R Bags</label>
+                <input type="number" id="h1-13r" placeholder="0" oninput="calculate()">
+                <label class="cat-toggle"><input type="checkbox" id="chk-h1-13r" onchange="toggleCatering('h1-13r','chk-h1-13r','lbl-h1-13r')"> Catering?</label>
+            </div>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="hold-title">
+            <span>HOLD 2</span>
             <span id="status-h2" class="status-badge mismatch">Empty</span>
         </div>
-        <div class="layout-note">Sections 21-26</div>
-        <div class="grid-layout">
+        <div class="layout-note">Sections 21-26 (Standard Fleet Layout)</div>
+        
+        <div class="row-grid">
             <div class="input-wrapper" style="background: #111;">
                 <label>Target Loadsheet WT</label>
                 <input type="number" id="target-h2" placeholder="0" oninput="calculate()">
             </div>
-            <div class="input-wrapper"><label>Pos 23P WT (Gross)</label><input type="number" id="h2-23p" placeholder="0" oninput="calculate()"></div>
-            <div class="input-wrapper"><label>Pos 24P WT (Gross)</label><input type="number" id="h2-24p" placeholder="0" oninput="calculate()"></div>
+            <div class="input-wrapper" id="wrap-h2-21l"><label id="lbl-h2-21l">21L Bags</label><input type="number" id="h2-21l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-21l" onchange="toggleCatering('h2-21l','chk-h2-21l','lbl-h2-21l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-21p"><label id="lbl-h2-21p">21P Gross WT</label><input type="number" id="h2-21p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-21p" onchange="toggleCatering('h2-21p','chk-h2-21p','lbl-h2-21p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-21r"><label id="lbl-h2-21r">21R Bags</label><input type="number" id="h2-21r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-21r" onchange="toggleCatering('h2-21r','chk-h2-21r','lbl-h2-21r')"> Catering?</label></div>
+        </div>
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-22l"><label id="lbl-h2-22l">22L Bags</label><input type="number" id="h2-22l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-22l" onchange="toggleCatering('h2-22l','chk-h2-22l','lbl-h2-22l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-22p"><label id="lbl-h2-22p">22P Gross WT</label><input type="number" id="h2-22p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-22p" onchange="toggleCatering('h2-22p','chk-h2-22p','lbl-h2-22p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-22r"><label id="lbl-h2-22r">22R Bags</label><input type="number" id="h2-22r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-22r" onchange="toggleCatering('h2-22r','chk-h2-22r','lbl-h2-22r')"> Catering?</label></div>
+        </div>
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-23l"><label id="lbl-h2-23l">23L Bags</label><input type="number" id="h2-23l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-23l" onchange="toggleCatering('h2-23l','chk-h2-23l','lbl-h2-23l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-23p"><label id="lbl-h2-23p">23P Gross WT</label><input type="number" id="h2-23p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-23p" onchange="toggleCatering('h2-23p','chk-h2-23p','lbl-h2-23p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-23r"><label id="lbl-h2-23r">23R Bags</label><input type="number" id="h2-23r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-23r" onchange="toggleCatering('h2-23r','chk-h2-23r','lbl-h2-23r')"> Catering?</label></div>
+        </div>
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-24l"><label id="lbl-h2-24l">24L Bags</label><input type="number" id="h2-24l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-24l" onchange="toggleCatering('h2-24l','chk-h2-24l','lbl-h2-24l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-24p"><label id="lbl-h2-24p">24P Gross WT</label><input type="number" id="h2-24p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-24p" onchange="toggleCatering('h2-24p','chk-h2-24p','lbl-h2-24p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h2-24r"><label id="lbl-h2-24r">24R Bags</label><input type="number" id="h2-24r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-24r" onchange="toggleCatering('h2-24r','chk-h2-24r','lbl-h2-24r')"> Catering?</label></div>
+        </div>
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-25l"><label id="lbl-h2-25l">25L Bags</label><input type="number" id="h2-25l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-25l" onchange="toggleCatering('h2-25l','chk-h2-25l','lbl-h2-25l')"> Catering?</label></div>
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-25r"><label id="lbl-h2-25r">25R Bags</label><input type="number" id="h2-25r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-25r" onchange="toggleCatering('h2-25r','chk-h2-25r','lbl-h2-25r')"> Catering?</label></div>
+        </div>
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-26l"><label id="lbl-h2-26l">26L Bags</label><input type="number" id="h2-26l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-26l" onchange="toggleCatering('h2-26l','chk-h2-26l','lbl-h2-26l')"> Catering?</label></div>
+            <div></div>
+            <div class="input-wrapper" id="wrap-h2-26r"><label id="lbl-h2-26r">26R Bags</label><input type="number" id="h2-26r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h2-26r" onchange="toggleCatering('h2-26r','chk-h2-26r','lbl-h2-26r')"> Catering?</label></div>
         </div>
     </div>
 
-    <!-- HOLD 3 -->
     <div class="form-group">
         <div class="hold-title">
-            <span>HOLD 3 (Containers / AKE)</span>
+            <span>HOLD 3</span>
             <span id="status-h3" class="status-badge mismatch">Empty</span>
         </div>
-        <div class="layout-note" id="h3-layout-text">Sections 32-34 (A390 Standard)</div>
-        
-        <div class="grid-layout" id="row-31" style="display: none;">
+        <div class="layout-note" id="note-h3">Sections 32-34 (A330-900 Configuration)</div>
+
+        <div class="row-grid" id="row-h3-31">
             <div class="input-wrapper" style="background: #111;">
                 <label>Target Loadsheet WT</label>
                 <input type="number" id="target-h3" placeholder="0" oninput="calculate()">
             </div>
-            <div class="input-wrapper" id="wrap-31l">
-                <label id="lbl-31l">31L Bags</label>
-                <input type="number" id="h3-31l" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-31l" onchange="toggleCatering('h3-31l','chk-31l','lbl-31l')"> Catering?</label>
-            </div>
-            <div class="input-wrapper" id="wrap-31r">
-                <label id="lbl-31r">31R Bags</label>
-                <input type="number" id="h3-31r" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-31r" onchange="toggleCatering('h3-31r','chk-31r','lbl-31r')"> Catering?</label>
-            </div>
+            <div class="input-wrapper" id="wrap-h3-31l"><label id="lbl-h3-31l">31L Bags</label><input type="number" id="h3-31l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-31l" onchange="toggleCatering('h3-31l','chk-h3-31l','lbl-h3-31l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h3-31p"><label id="lbl-h3-31p">31P Gross WT</label><input type="number" id="h3-31p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-31p" onchange="toggleCatering('h3-31p','chk-h3-31p','lbl-h3-31p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h3-31r"><label id="lbl-h3-31r">31R Bags</label><input type="number" id="h3-31r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-31r" onchange="toggleCatering('h3-31r','chk-h3-31r','lbl-h3-31r')"> Catering?</label></div>
         </div>
 
-        <div class="grid-layout" id="row-33-container">
-            <!-- This target block displays if Section 31 is hidden (A390 setup) -->
-            <div class="input-wrapper" id="h3-main-target-box" style="background: #111;">
+        <div class="row-grid" id="row-h3-32-root">
+            <div class="input-wrapper" id="h3-alt-target-box" style="background: #111;">
                 <label>Target Loadsheet WT</label>
                 <input type="number" id="target-h3-alt" placeholder="0" oninput="syncTargets('target-h3-alt','target-h3')">
             </div>
-            <div class="input-wrapper" id="wrap-33l">
-                <label id="lbl-33l">33L Bags</label>
-                <input type="number" id="h3-33l" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-33l" onchange="toggleCatering('h3-33l','chk-33l','lbl-33l')"> Catering?</label>
-            </div>
-            <div class="input-wrapper" id="wrap-33r">
-                <label id="lbl-33r">33R Bags</label>
-                <input type="number" id="h3-33r" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-33r" onchange="toggleCatering('h3-33r','chk-33r','lbl-33r')"> Catering?</label>
-            </div>
+            <div class="input-wrapper" id="wrap-h3-32l"><label id="lbl-h3-32l">32L Bags</label><input type="number" id="h3-32l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-32l" onchange="toggleCatering('h3-32l','chk-h3-32l','lbl-h3-32l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h3-32p"><label id="lbl-h3-32p">32P Gross WT</label><input type="number" id="h3-32p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-32p" onchange="toggleCatering('h3-32p','chk-h3-32p','lbl-h3-32p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h3-32r"><label id="lbl-h3-32r">32R Bags</label><input type="number" id="h3-32r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-32r" onchange="toggleCatering('h3-32r','chk-h3-32r','lbl-h3-32r')"> Catering?</label></div>
         </div>
 
-        <div class="grid-layout">
+        <div class="row-grid">
             <div></div>
-            <div class="input-wrapper" id="wrap-34l">
-                <label id="lbl-34l">34L Bags</label>
-                <input type="number" id="h3-34l" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-34l" onchange="toggleCatering('h3-34l','chk-34l','lbl-34l')"> Catering?</label>
-            </div>
-            <div class="input-wrapper" id="wrap-34r">
-                <label id="lbl-34r">34R Bags</label>
-                <input type="number" id="h3-34r" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-34r" onchange="toggleCatering('h3-34r','chk-34r','lbl-34r')"> Catering?</label>
-            </div>
+            <div class="input-wrapper" id="wrap-h3-33l"><label id="lbl-h3-33l">33L Bags</label><input type="number" id="h3-33l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-33l" onchange="toggleCatering('h3-33l','chk-h3-33l','lbl-h3-33l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h3-33p"><label id="lbl-h3-33p">33P Gross WT</label><input type="number" id="h3-33p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-33p" onchange="toggleCatering('h3-33p','chk-h3-33p','lbl-h3-33p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h3-33r"><label id="lbl-h3-33r">33R Bags</label><input type="number" id="h3-33r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-33r" onchange="toggleCatering('h3-33r','chk-h3-33r','lbl-h3-33r')"> Catering?</label></div>
+        </div>
+
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h3-34l"><label id="lbl-h3-34l">34L Bags</label><input type="number" id="h3-34l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-34l" onchange="toggleCatering('h3-34l','chk-h3-34l','lbl-h3-34l')"> Catering?</label></div>
+            <div></div>
+            <div class="input-wrapper" id="wrap-h3-34r"><label id="lbl-h3-34r">34R Bags</label><input type="number" id="h3-34r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h3-34r" onchange="toggleCatering('h3-34r','chk-h3-34r','lbl-h3-34r')"> Catering?</label></div>
         </div>
     </div>
 
-    <!-- HOLD 4 -->
     <div class="form-group">
         <div class="hold-title">
-            <span>HOLD 4 (Containers / AKE)</span>
+            <span>HOLD 4</span>
             <span id="status-h4" class="status-badge mismatch">Empty</span>
         </div>
-        <div class="layout-note">Sections 41-43</div>
-        <div class="grid-layout">
+        <div class="layout-note">Sections 41-43 (Standard Fleet Layout)</div>
+        
+        <div class="row-grid">
             <div class="input-wrapper" style="background: #111;">
                 <label>Target Loadsheet WT</label>
                 <input type="number" id="target-h4" placeholder="0" oninput="calculate()">
             </div>
-            <div class="input-wrapper" id="wrap-41l">
-                <label id="lbl-41l">41L Bags</label>
-                <input type="number" id="h4-41l" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-41l" onchange="toggleCatering('h4-41l','chk-41l','lbl-41l')"> Catering?</label>
-            </div>
-            <div class="input-wrapper" id="wrap-41r">
-                <label id="lbl-41r">41R Bags</label>
-                <input type="number" id="h4-41r" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-41r" onchange="toggleCatering('h4-41r','chk-41r','lbl-41r')"> Catering?</label>
-            </div>
+            <div class="input-wrapper" id="wrap-h4-41l"><label id="lbl-h4-41l">41L Bags</label><input type="number" id="h4-41l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-41l" onchange="toggleCatering('h4-41l','chk-h4-41l','lbl-h4-41l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h4-41p"><label id="lbl-h4-41p">41P Gross WT</label><input type="number" id="h4-41p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-41p" onchange="toggleCatering('h4-41p','chk-h4-41p','lbl-h4-41p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h4-41r"><label id="lbl-h4-41r">41R Bags</label><input type="number" id="h4-41r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-41r" onchange="toggleCatering('h4-41r','chk-h4-41r','lbl-h4-41r')"> Catering?</label></div>
         </div>
-        <div class="grid-layout">
+        <div class="row-grid">
             <div></div>
-            <div class="input-wrapper" id="wrap-42l">
-                <label id="lbl-42l">42L Bags</label>
-                <input type="number" id="h4-42l" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-42l" onchange="toggleCatering('h4-42l','chk-42l','lbl-42l')"> Catering?</label>
-            </div>
-            <div class="input-wrapper" id="wrap-43r">
-                <label id="lbl-43r">43R Bags</label>
-                <input type="number" id="h4-43r" placeholder="0" oninput="calculate()">
-                <label class="cat-toggle"><input type="checkbox" id="chk-43r" onchange="toggleCatering('h4-43r','chk-43r','lbl-43r')"> Catering?</label>
-            </div>
+            <div class="input-wrapper" id="wrap-h4-42l"><label id="lbl-h4-42l">42L Bags</label><input type="number" id="h4-42l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-42l" onchange="toggleCatering('h4-42l','chk-h4-42l','lbl-h4-42l')"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h4-42p"><label id="lbl-h4-42p">42P Gross WT</label><input type="number" id="h4-42p" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-42p" onchange="toggleCatering('h4-42p','chk-h4-42p','lbl-h4-42p', true)"> Catering?</label></div>
+            <div class="input-wrapper" id="wrap-h4-42r"><label id="lbl-h4-42r">42R Bags</label><input type="number" id="h4-42r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-42r" onchange="toggleCatering('h4-42r','chk-h4-42r','lbl-h4-42r')"> Catering?</label></div>
+        </div>
+        <div class="row-grid">
+            <div></div>
+            <div class="input-wrapper" id="wrap-h4-43l"><label id="lbl-h4-43l">43L Bags</label><input type="number" id="h4-43l" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-43l" onchange="toggleCatering('h4-43l','chk-h4-43l','lbl-h4-43l')"> Catering?</label></div>
+            <div></div>
+            <div class="input-wrapper" id="wrap-h4-43r"><label id="lbl-h4-43r">43R Bags</label><input type="number" id="h4-43r" placeholder="0" oninput="calculate()"><label class="cat-toggle"><input type="checkbox" id="chk-h4-43r" onchange="toggleCatering('h4-43r','chk-h4-43r','lbl-h4-43r')"> Catering?</label></div>
         </div>
     </div>
 
-    <!-- HOLD 5 -->
     <div class="form-group">
         <div class="hold-title">
             <span>HOLD 5 (Loose Bulk)</span>
             <span id="status-h5" class="status-badge mismatch">Empty</span>
         </div>
         <div class="layout-note">Bulk Compartment (No metal container weights processed)</div>
-        <div class="grid-layout">
+        <div class="row-grid">
             <div class="input-wrapper" style="background: #111;">
                 <label>Target Loadsheet WT</label>
                 <input type="number" id="target-h5" placeholder="0" oninput="calculate()">
             </div>
             <div class="input-wrapper"><label>Bulk Bags Count</label><input type="number" id="h5-bags" placeholder="0" oninput="calculate()"></div>
+            <div></div>
             <div></div>
         </div>
     </div>
@@ -300,20 +359,24 @@
         document.getElementById('btn-A390').classList.toggle('active', type === 'A390');
         document.getElementById('btn-A333').classList.toggle('active', type === 'A333');
         
-        const layoutText = document.getElementById('h3-layout-text');
-        const row31 = document.getElementById('row-31');
-        const mainTargetBox = document.getElementById('h3-main-target-box');
+        // Update labels
+        document.getElementById('note-h1').textContent = type === 'A390' ? "Sections 11-13 (A330-900 Configuration)" : "Sections 11-12 (A330-300 Configuration)";
+        document.getElementById('note-h3').textContent = type === 'A390' ? "Sections 32-34 (A330-900 Configuration)" : "Sections 31-34 (A330-300 Configuration)";
 
+        // Toggle visibility variations
         if (type === 'A333') {
-            layoutText.textContent = "Sections 31-34 (Section 31 Active)";
-            row31.style.display = 'grid';
-            mainTargetBox.style.display = 'none';
+            document.getElementById('row-h1-13').classList.add('hidden-row');
+            document.getElementById('row-h3-31').classList.remove('hidden-row');
+            document.getElementById('h3-alt-target-box').style.display = 'none';
+            resetField('h1-13l','chk-h1-13l','lbl-h1-13l');
+            resetField('h1-13r','chk-h1-13r','lbl-h1-13r');
         } else {
-            layoutText.textContent = "Sections 32-34 (A390 Standard)";
-            row31.style.display = 'none';
-            mainTargetBox.style.display = 'block';
-            resetField('h3-31l','chk-31l','lbl-31l');
-            resetField('h3-31r','chk-31r','lbl-31r');
+            document.getElementById('row-h1-13').classList.remove('hidden-row');
+            document.getElementById('row-h3-31').classList.add('hidden-row');
+            document.getElementById('h3-alt-target-box').style.display = 'block';
+            resetField('h3-31l','chk-h3-31l','lbl-h3-31l');
+            resetField('h3-31p','chk-h3-31p','lbl-h3-31p', true);
+            resetField('h3-31r','chk-h3-31r','lbl-h3-31r');
         }
         calculate();
     }
@@ -323,12 +386,12 @@
         calculate();
     }
 
-    function toggleCatering(inputId, checkId, labelId) {
+    function toggleCatering(inputId, checkId, labelId, isPallet = false) {
         const inputEl = document.getElementById(inputId);
         const checkEl = document.getElementById(checkId);
         const labelEl = document.getElementById(labelId);
         const wrapper = inputEl.parentElement;
-        const posCode = inputId.split('-')[1].toUpperCase();
+        const posCode = inputId.replace('-', '').toUpperCase();
 
         if (checkEl.checked) {
             wrapper.classList.add('catering-active');
@@ -340,7 +403,7 @@
             inputEl.style.fontWeight = "bold";
         } else {
             wrapper.classList.remove('catering-active');
-            labelEl.textContent = posCode + " Bags";
+            labelEl.textContent = posCode + (isPallet ? " Gross WT" : " Bags");
             inputEl.type = "number";
             inputEl.readOnly = false;
             inputEl.value = "";
@@ -351,9 +414,9 @@
         calculate();
     }
 
-    function resetField(inputId, checkId, labelId) {
+    function resetField(inputId, checkId, labelId, isPallet = false) {
         document.getElementById(checkId).checked = false;
-        toggleCatering(inputId, checkId, labelId);
+        toggleCatering(inputId, checkId, labelId, isPallet);
     }
 
     function getVal(id) {
@@ -382,16 +445,20 @@
         let baggageWeightSum = 0;
         let cateringActiveIDs = [];
 
-        // Distinguish standard baggage from catering elements
         positions.forEach(id => {
-            const suffix = id.split('-')[1];
-            const chk = document.getElementById('chk-' + suffix);
+            const chk = document.getElementById('chk-' + id);
             if (chk && chk.checked) {
                 cateringActiveIDs.push(id);
             } else {
                 const val = document.getElementById(id).value;
                 if (val !== "" && !isNaN(val) && parseFloat(val) > 0) {
-                    baggageWeightSum += (parseFloat(val) * 13) + 65;
+                    if (id.includes('p')) {
+                        // Pallets process directly as input gross values
+                        baggageWeightSum += parseFloat(val);
+                    } else {
+                        // Containers calculate bags count rule
+                        baggageWeightSum += (parseFloat(val) * 13) + 65;
+                    }
                 }
             }
         });
@@ -402,7 +469,6 @@
                 totalHoldCateringWeight = targetValue - baggageWeightSum;
                 if (totalHoldCateringWeight < 0) totalHoldCateringWeight = 0;
                 
-                // Divide leftover payload allocation equally across designated units
                 const splitWeight = Math.floor(totalHoldCateringWeight / cateringActiveIDs.length);
                 cateringActiveIDs.forEach(id => {
                     document.getElementById(id).value = splitWeight + " kg";
@@ -418,20 +484,42 @@
     }
 
     function calculate() {
+        // --- HOLD 1 ---
+        let h1Positions = ['h1-11l', 'h1-11p', 'h1-11r', 'h1-12l', 'h1-12p', 'h1-12r'];
+        if (currentAircraft === 'A390') h1Positions.push('h1-13l', 'h1-13r');
+        const h1Total = computeFlexibleHold(h1Positions, getVal('target-h1'));
+        updateStatus('status-h1', h1Total, getVal('target-h1'));
+
         // --- HOLD 2 ---
-        const h2Total = getVal('h2-23p') + getVal('h2-24p');
+        const h2Positions = [
+            'h2-21l', 'h2-21p', 'h2-21r',
+            'h2-22l', 'h2-22p', 'h2-22r',
+            'h2-23l', 'h2-23p', 'h2-23r',
+            'h2-24l', 'h2-24p', 'h2-24r',
+            'h2-25l', 'h2-25r',
+            'h2-26l', 'h2-26r'
+        ];
+        const h2Total = computeFlexibleHold(h2Positions, getVal('target-h2'));
         updateStatus('status-h2', h2Total, getVal('target-h2'));
 
         // --- HOLD 3 ---
-        let h3Positions = ['h3-33l', 'h3-33r', 'h3-34l', 'h3-34r'];
-        if (currentAircraft === 'A333') h3Positions.push('h3-31l', 'h3-31r');
+        let h3Positions = [
+            'h3-32l', 'h3-32p', 'h3-32r',
+            'h3-33l', 'h3-33p', 'h3-33r',
+            'h3-34l', 'h3-34r'
+        ];
+        if (currentAircraft === 'A333') h3Positions.push('h3-31l', 'h3-31p', 'h3-31r');
         
         const targetH3 = currentAircraft === 'A333' ? getVal('target-h3') : getVal('target-h3-alt');
         const h3Total = computeFlexibleHold(h3Positions, targetH3);
         updateStatus('status-h3', h3Total, targetH3);
 
         // --- HOLD 4 ---
-        const h4Positions = ['h4-41l', 'h4-41r', 'h4-42l', 'h4-43r'];
+        const h4Positions = [
+            'h4-41l', 'h4-41p', 'h4-41r',
+            'h4-42l', 'h4-42p', 'h4-42r',
+            'h4-43l', 'h4-43r'
+        ];
         const h4Total = computeFlexibleHold(h4Positions, getVal('target-h4'));
         updateStatus('status-h4', h4Total, getVal('target-h4'));
 
@@ -440,7 +528,8 @@
         updateStatus('status-h5', h5Total, getVal('target-h5'));
     }
 
-    calculate();
+    // Initialize layout
+    switchAircraft('A390');
 </script>
 </body>
 </html>
