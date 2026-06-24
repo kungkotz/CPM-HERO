@@ -126,4 +126,238 @@
             <div class="upload-box">
                 <h3>Side A (ULD Numbers)</h3>
                 <div class="upload-zone" id="dropzoneA">
-                    <p style="pointer-events: none; margin: 0;">📸 Click or Drop Here</p>
+                    <p style="margin: 0; pointer-events: none;">📸 Click to Upload or Drag File Here</p>
+                    <input type="file" id="fileInputA" accept="image/*" style="display:none">
+                </div>
+                <img id="previewA" class="preview-img" alt="Side A Preview">
+            </div>
+
+            <div class="upload-box">
+                <h3>Side B (Bag Counts / Grid)</h3>
+                <div class="upload-zone" id="dropzoneB">
+                    <p style="margin: 0; pointer-events: none;">📸 Click to Upload or Drag File Here</p>
+                    <input type="file" id="fileInputB" accept="image/*" style="display:none">
+                </div>
+                <img id="previewB" class="preview-img" alt="Side B Preview">
+            </div>
+
+        </div>
+    </div>
+
+    <div class="panel">
+        <h2>2. Data Entry & Automated Checker</h2>
+        <div class="info-box">
+            <strong>Rules Applied:</strong> Bags = 13 kg | AKE empty weight = +65 kg | PMC = Total gross weight directly from sheet | Catering = Calculated automatically from remainder.
+        </div>
+        
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 2 (Pallets / PMC Gross)</span>
+                <span id="status-h2" class="status-badge mismatch">Empty</span>
+            </div>
+            <div class="grid-row">
+                <div>
+                    <label>Target Loadsheet WT</label>
+                    <input type="number" id="target-h2" placeholder="0" oninput="calculate()">
+                </div>
+                <div>
+                    <label>Pos 23P WT</label>
+                    <input type="number" id="h2-23p" placeholder="0" oninput="calculate()">
+                </div>
+                <div>
+                    <label>Pos 24P WT</label>
+                    <input type="number" id="h2-24p" placeholder="0" oninput="calculate()">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 3 (Containers / AKE)</span>
+                <span id="status-h3" class="status-badge mismatch">Empty</span>
+            </div>
+            <div class="grid-row">
+                <div><label>Target Loadsheet WT</label><input type="number" id="target-h3" placeholder="0" oninput="calculate()"></div>
+                <div><label>33L Bags</label><input type="number" id="h3-33l" placeholder="0" oninput="calculate()"></div>
+                <div><label>33R Bags</label><input type="number" id="h3-33r" placeholder="0" oninput="calculate()"></div>
+            </div>
+            <div class="grid-row" style="margin-top: 5px;">
+                <div></div>
+                <div><label>34L Bags</label><input type="number" id="h3-34l" placeholder="0" oninput="calculate()"></div>
+                <div><label>34R Bags</label><input type="number" id="h3-34r" placeholder="0" oninput="calculate()"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 4 (Containers + Auto Catering)</span>
+                <span id="status-h4" class="status-badge mismatch">Empty</span>
+            </div>
+            <div class="grid-row">
+                <div><label>Target Loadsheet WT</label><input type="number" id="target-h4" placeholder="0" oninput="calculate()"></div>
+                <div><label>41L Bags</label><input type="number" id="h4-41l" placeholder="0" oninput="calculate()"></div>
+                <div><label>41R Bags</label><input type="number" id="h4-41r" placeholder="0" oninput="calculate()"></div>
+            </div>
+            <div class="grid-row" style="margin-top: 5px;">
+                <div>
+                    <label>Auto-Calculated Catering</label>
+                    <input type="text" id="h4-cat" style="background:#153520; color:#85ff85; font-weight:bold;" readonly>
+                </div>
+                <div><label>42L Bags</label><input type="number" id="h4-42l" placeholder="0" oninput="calculate()"></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 5 (Loose Bulk)</span>
+                <span id="status-h5" class="status-badge mismatch">Empty</span>
+            </div>
+            <div class="grid-row">
+                <div>
+                    <label>Target Loadsheet WT</label>
+                    <input type="number" id="target-h5" placeholder="0" oninput="calculate()">
+                </div>
+                <div>
+                    <label>Bulk Bags (No Tare)</label>
+                    <input type="number" id="h5-bags" placeholder="0" oninput="calculate()">
+                </div>
+                <div></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    function setupUploader(dropzoneId, inputId, previewId) {
+        const dropzone = document.getElementById(dropzoneId);
+        const fileInput = document.getElementById(inputId);
+        const preview = document.getElementById(previewId);
+
+        if (!dropzone || !fileInput || !preview) return;
+
+        // Clicking anywhere inside the dashed zone triggers file selection safely
+        dropzone.addEventListener('click', function() {
+            fileInput.click();
+        });
+        
+        dropzone.addEventListener('dragover', function(e) { 
+            e.preventDefault(); 
+            dropzone.style.borderColor = 'var(--accent)'; 
+        });
+        
+        dropzone.addEventListener('dragleave', function() { 
+            dropzone.style.borderColor = '#444'; 
+        });
+        
+        dropzone.addEventListener('drop', function(e) {
+            e.preventDefault();
+            dropzone.style.borderColor = '#444';
+            if(e.dataTransfer.files && e.dataTransfer.files.length) { 
+                handleFile(e.dataTransfer.files[0], preview, dropzone); 
+            }
+        });
+        
+        fileInput.addEventListener('change', function(e) {
+            if(e.target.files && e.target.files.length) { 
+                handleFile(e.target.files[0], preview, dropzone); 
+            }
+        });
+    }
+
+    function handleFile(file, previewElement, dropzoneElement) {
+        if (!file || !file.type.match('image.*')) return;
+        
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            previewElement.src = e.target.result;
+            previewElement.style.display = 'block';
+            dropzoneElement.style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+
+    setupUploader('dropzoneA', 'fileInputA', 'previewA');
+    setupUploader('dropzoneB', 'fileInputB', 'previewB');
+
+    function getVal(id) { 
+        const val = document.getElementById(id).value;
+        if (val === "" || isNaN(val)) return 0;
+        return parseFloat(val); 
+    }
+    
+    function updateStatus(badgeId, calculated, target) {
+        const badge = document.getElementById(badgeId);
+        if (!badge) return;
+        
+        const diff = calculated - target;
+        if (target === 0 && calculated === 0) {
+            badge.textContent = "Empty";
+            badge.className = "status-badge mismatch";
+        } else if (diff === 0) {
+            badge.textContent = "MATCH (" + calculated + " kg)";
+            badge.className = "status-badge match";
+        } else {
+            badge.textContent = "Diff: " + (diff > 0 ? "+" : "") + diff + " kg (Calc: " + calculated + ")";
+            badge.className = "status-badge mismatch";
+        }
+    }
+
+    function calculate() {
+        // HOLD 2: PMC Direct Gross Verification
+        const h2Total = getVal('h2-23p') + getVal('h2-24p');
+        updateStatus('status-h2', h2Total, getVal('target-h2'));
+
+        // HOLD 3: Container Math (Bags * 13 + 65 Empty AKE weight)
+        const h3Positions = ['h3-33l', 'h3-33r', 'h3-34l', 'h3-34r'];
+        let h3Total = 0;
+        h3Positions.forEach(id => {
+            const inputElement = document.getElementById(id);
+            if (inputElement && inputElement.value !== "") {
+                const bags = parseFloat(inputElement.value);
+                if (!isNaN(bags) && bags > 0) {
+                    h3Total += (bags * 13) + 65;
+                }
+            }
+        });
+        updateStatus('status-h3', h3Total, getVal('target-h3'));
+
+        // HOLD 4: Containers + Auto-Catering Engine Delta Identification
+        const h4Positions = ['h4-41l', 'h4-41r', 'h4-42l'];
+        let h4BagsWeightTotal = 0;
+        
+        h4Positions.forEach(id => {
+            const inputElement = document.getElementById(id);
+            if (inputElement && inputElement.value !== "") {
+                const bags = parseFloat(inputElement.value);
+                if (!isNaN(bags) && bags > 0) {
+                    h4BagsWeightTotal += (bags * 13) + 65;
+                }
+            }
+        });
+        
+        const targetH4 = getVal('target-h4');
+        let calculatedCatering = 0;
+        
+        if (targetH4 > 0) {
+            calculatedCatering = targetH4 - h4BagsWeightTotal;
+        }
+        
+        const catField = document.getElementById('h4-cat');
+        if (catField) {
+            catField.value = calculatedCatering > 0 ? calculatedCatering + " kg" : "0 kg";
+        }
+        
+        const h4FinalCalc = h4BagsWeightTotal + (calculatedCatering > 0 ? calculatedCatering : 0);
+        updateStatus('status-h4', h4FinalCalc, targetH4);
+
+        // HOLD 5: Loose Bulk Evaluation (Bags * 13 Only)
+        const h5Total = getVal('h5-bags') * 13;
+        updateStatus('status-h5', h5Total, getVal('target-h5'));
+    }
+
+    calculate();
+</script>
+</body>
+</html>
