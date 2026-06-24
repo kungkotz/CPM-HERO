@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loadplan Reconciler & Auto-Checker</title>
+    <style>
+        :root {
+            --bg-color: #121212;
+            --card-bg: #1e1e1e;
+            --accent: #00adb5;
+            --text: #eeeeee;
+            --success: #4caf50;
+            --error: #f44336;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text);
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+        @media (max-width: 900px) {
+            .container { grid-template-columns: 1fr; }
+        }
+        .panel {
+            background: var(--card-bg);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .upload-zone {
+            border: 2px dashed #444;
+            padding: 30px;
+            text-align: center;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-bottom: 15px;
+        }
+        .upload-zone:hover { border-color: var(--accent); }
+        #preview {
+            width: 100%;
+            max-height: 75vh;
+            object-fit: contain;
+            border-radius: 4px;
+            display: none;
+        }
+        h2 { margin-top: 0; color: var(--accent); border-bottom: 1px solid #333; padding-bottom: 8px;}
+        .form-group {
+            margin-bottom: 15px;
+            background: #252525;
+            padding: 12px;
+            border-radius: 6px;
+        }
+        .hold-title { font-weight: bold; margin-bottom: 8px; color: var(--accent); display: flex; justify-content: space-between;}
+        .grid-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 5px;
+        }
+        label { font-size: 12px; color: #aaa; display: block; margin-bottom: 2px; }
+        input {
+            width: 100%;
+            background: #333;
+            border: 1px solid #444;
+            color: #fff;
+            padding: 6px;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        input:focus { border-color: var(--accent); outline: none; }
+        .status-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        .match { background: var(--success); color: white; }
+        .mismatch { background: var(--error); color: white; }
+        .info-box {
+            background: #1a2a3a;
+            border-left: 4px solid var(--accent);
+            padding: 10px;
+            margin-bottom: 15px;
+            font-size: 13px;
+            border-radius: 0 4px 4px 0;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="panel">
+        <h2>1. Loadplan Image Reference</h2>
+        <div class="upload-zone" id="dropzone">
+            <p>Drag & Drop Loadplan / Document here or Click to Upload</p>
+            <input type="file" id="fileInput" accept="image/*" style="display:none">
+        </div>
+        <img id="preview" alt="Loadplan Preview">
+    </div>
+
+    <div class="panel">
+        <h2>2. Data Entry & Automated Checker</h2>
+        <div class="info-box">
+            <strong>Rules Applied:</strong> Bags = 13 kg | AKE empty weight = +65 kg | PMC = Total gross weight directly from sheet | Catering = Calculated automatically from remainder.
+        </div>
+        
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 2 (Pallets / PMC Gross)</span>
+                <span id="status-h2" class="status-badge mismatch">0 kg</span>
+            </div>
+            <div class="grid-row">
+                <div>
+                    <label>Target Loadsheet WT</label>
+                    <input type="number" id="target-h2" value="2980" oninput="calculate()">
+                </div>
+                <div>
+                    <label>Pos 23P WT</label>
+                    <input type="number" id="h2-23p" value="1220" oninput="calculate()">
+                </div>
+                <div>
+                    <label>Pos 24P WT</label>
+                    <input type="number" id="h2-24p" value="1760" oninput="calculate()">
+                </div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 3 (Containers / AKE)</span>
+                <span id="status-h3" class="status-badge mismatch">0 kg</span>
+            </div>
+            <div class="grid-row">
+                <div><label>Target Loadsheet WT</label><input type="number" id="target-h3" value="2067" oninput="calculate()"></div>
+                <div><label>33L Bags</label><input type="number" id="h3-33l" value="41" oninput="calculate()"></div>
+                <div><label>33R Bags</label><input type="number" id="h3-33r" value="40" oninput="calculate()"></div>
+            </div>
+            <div class="grid-row" style="margin-top: 5px;">
+                <div></div>
+                <div><label>34L Bags</label><input type="number" id="h3-34l" value="18" oninput="calculate()"></div>
+                <div><label>34R Bags</label><input type="number" id="h3-34r" value="40" oninput="calculate()"></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 4 (Containers + Auto Catering)</span>
+                <span id="status-h4" class="status-badge mismatch">0 kg</span>
+            </div>
+            <div class="grid-row">
+                <div><label>Target Loadsheet WT</label><input type="number" id="target-h4" value="2059" oninput="calculate()"></div>
+                <div><label>41L Bags</label><input type="number" id="h4-41l" value="39" oninput="calculate()"></div>
+                <div><label>41R Bags</label><input type="number" id="h4-41r" value="38" oninput="calculate()"></div>
+            </div>
+            <div class="grid-row" style="margin-top: 5px;">
+                <div>
+                    <label>Auto-Calculated Catering</label>
+                    <input type="text" id="h4-cat" style="background:#153520; color:#85ff85; font-weight:bold;" readonly>
+                </div>
+                <div><label>42L Bags</label><input type="number" id="h4-42l" value="37" oninput="calculate()"></div>
+                <div></div>
+            </div>
+        </div>
+
+        <div class="form-group">
+            <div class="hold-title">
+                <span>HOLD 5 (Loose Bulk)</span>
+                <span id="status-h5" class="status-badge mismatch">0 kg</span>
+            </div>
+            <div class="grid-row">
+                <div>
+                    <label>Target Loadsheet WT</label>
+                    <input type="number" id="target-h5" value="104" oninput="calculate()">
+                </div>
+                <div>
+                    <label>Bulk Bags (No Tare)</label>
+                    <input type="number" id="h5-bags" value="8" oninput="calculate()">
+                </div>
+                <div></div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    // Handle File Upload Display
+    const dropzone = document.getElementById('dropzone');
+    const fileInput = document.getElementById('fileInput');
+    const preview = document.getElementById('preview');
+
+    dropzone.addEventListener('click', () => fileInput.click());
+    dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.style.borderColor = 'var(--accent)'; });
+    dropzone.addEventListener('dragleave', () => { dropzone.style.borderColor = '#444'; });
+    dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        if(e.dataTransfer.files.length) { handleFile(e.dataTransfer.files[0]); }
+    });
+    fileInput.addEventListener('change', (e) => {
+        if(e.target.files.length) { handleFile(e.target.files[0]); }
+    });
+
+    function handleFile(file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            preview.src = e.target.result;
+            preview.style.display = 'block';
+            dropzone.style.display = 'none';
+        }
+        reader.readAsDataURL(file);
+    }
+
+    // Helper to get sanitised values
+    function getVal(id) { return parseFloat(document.getElementById(id).value) || 0; }
+    
+    // Updates UI visual statuses based on matching math
+    function updateStatus(badgeId, calculated, target) {
+        const badge = document.getElementById(badgeId);
+        const diff = calculated - target;
+        if (diff === 0) {
+            badge.textContent = "MATCH (" + calculated + " kg)";
+            badge.className = "status-badge match";
+        } else {
+            badge.textContent = "Diff: " + (diff > 0 ? "+" : "") + diff + " kg (Calc: " + calculated + ")";
+            badge.className = "status-badge mismatch";
+        }
+    }
+
+    function calculate() {
+        // --- HOLD 2: PMC Direct Weights (Container weight included) ---
+        const h2Total = getVal('h2-23p') + getVal('h2-24p');
+        updateStatus('status-h2', h2Total, getVal('target-h2'));
+
+        // --- HOLD 3: AKE Math (Bags * 13 + 65 Empty Container Weight) ---
+        const h3Positions = ['h3-33l', 'h3-33r', 'h3-34l', 'h3-34r'];
+        let h3Total = 0;
+        h3Positions.forEach(id => {
+            const bags = getVal(id);
+            if(bags > 0) h3Total += (bags * 13) + 65;
+        });
+        updateStatus('status-h3', h3Total, getVal('target-h3'));
+
+        // --- HOLD 4: AKE Math + Missing Catering Weight Engine ---
+        const h4Positions = ['h4-41l', 'h4-41r', 'h4-42l'];
+        let h4BagsWeightTotal = 0;
+        h4Positions.forEach(id => {
+            const bags = getVal(id);
+            if(bags > 0) h4BagsWeightTotal += (bags * 13) + 65;
+        });
+        
+        const targetH4 = getVal('target-h4');
+        // Catering is automatically derived as the delta
+        const calculatedCatering = targetH4 - h4BagsWeightTotal;
+        
+        document.getElementById('h4-cat').value = calculatedCatering > 0 ? calculatedCatering + " kg" : "0 kg";
+        
+        // Hold 4 validation assumes the catering value completes the target balance
+        const h4FinalCalc = h4BagsWeightTotal + (calculatedCatering > 0 ? calculatedCatering : 0);
+        updateStatus('status-h4', h4FinalCalc, targetH4);
+
+        // --- HOLD 5: Loose Bulk Weight (No Tare weight applied) ---
+        const h5Total = getVal('h5-bags') * 13;
+        updateStatus('status-h5', h5Total, getVal('target-h5'));
+    }
+
+    // Run computation sequence on interface initialization
+    calculate();
+</script>
+</body>
+</html>
